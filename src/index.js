@@ -11,14 +11,6 @@ function Square(props) {
 }
 
 class Board extends React.Component {
-  // constructor(props) {
-  //   super(props);
-  //   this.state = {
-  //     squares: Array(9).fill(null),
-  //     xIsNext: true,
-  //   };
-  // }
-
   renderSquare(i) {
     return (
       <Square 
@@ -61,7 +53,11 @@ class Game extends React.Component {
     this.state = {
       history: [{
         squares: Array(9).fill(null),
+        moveLoc: null,
       }],
+      // movehistory: [{
+      //   moveCoord: Array(2).fill(null),
+      // }],
       stepNumber: 0,
       xIsNext: true
     };
@@ -84,7 +80,8 @@ class Game extends React.Component {
     squares[i] = this.state.xIsNext? 'X' : 'O';
     this.setState({
       history: history.concat([{
-        squares: squares
+        squares: squares,
+        moveLoc: i,
       }]),
       stepNumber: history.length,
       xIsNext: !this.state.xIsNext,
@@ -96,9 +93,10 @@ class Game extends React.Component {
     const current = history[this.state.stepNumber];
     const winner = calculateWinner(current.squares);
 
+    // map history of moves to React elements representing buttons on the screen
     const moves = history.map( (step,move) => {
       const desc = move ?
-        'Go to move #' + move :
+        'Go to move #' + move + " after placing at location:" + convertCoord(step.moveLoc) :
         'Go to game start';
       return (
         <li key={move}>
@@ -157,4 +155,13 @@ function calculateWinner(squares) {
     }
   }
   return null;
+}
+
+
+/*
+ * Convert the index to (col, row) format
+ */
+function convertCoord(i) {
+  // return "[" + i%3 + "," + (i/3)|0 + "]";
+  return i%3+1 + "," + parseInt(i/3+1);
 }
